@@ -67,17 +67,27 @@ class ApiController extends Controller
                     isset($data->{'ultimo-telefone-informado'}) &&
                     isset($data->{'ultimo-telefone-informado'}->{'detalhe-ultimo-telefone-informado'})
                 ) {
-                    $phone = $data->{'ultimo-telefone-informado'}->{'detalhe-ultimo-telefone-informado'};
-                    foreach ($phone as $key => $value) {
-                        $numero[] = $value->telefone->telefone;
-                        //$phones['ddd'] = $value->telefone->{'numero-ddd'};
-                    }
+                    $phone[0] = ['number' => $this->convert_phone_spc_brazil($data->{'ultimo-telefone-informado'}->{'detalhe-ultimo-telefone-informado'}->telefone)];
 
-                    return $phones;
+                    return $phone[0];
                 }
             }
 
             return 'nao entrou no telefone';
+        }
+    }
+
+    private function convert_phone_spc_brazil($phone)
+    {
+        $str = '';
+        dd($phone);
+        if (isset($phone->telefone->{'numero-ddd'})) {
+            $str = '(' . $phone->telefone->{'numero-ddd'} . ')';
+            return 'Entrou no IF ddd';
+        }
+        if (isset($phone->telefone->numero)) {
+            return 'Entrou no IF Numero';
+            dd($str . substr_replace($phone->telefone->numero, '-', 4, 0));
         }
     }
 }
